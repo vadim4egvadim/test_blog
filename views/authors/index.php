@@ -21,11 +21,28 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'name',
-            'status',
-
+            [   
+                'label' => 'Картинка',
+                'format' => 'raw',
+                'value' => function($data){
+                return Html::img($data->file, ['alt' => $data->name, 'width' => '50px']);
+            }
+            ],
+            [   
+                'label' => 'Имя',
+                'format' => 'raw',
+                'value' => function($data){
+                return $data->name.' ('.$data->id.')';
+            }
+            ],
+            [   
+                'label' => 'Статус',
+                'format' => 'raw',
+                'value' => function($data){
+                return $data->status_name;
+            }
+            ],
+                
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>
