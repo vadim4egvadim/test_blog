@@ -123,4 +123,12 @@ class SiteController extends Controller
     {
         return $this->render('about');
     }
+    public function actionAuthors()
+    {
+        return $this->render('authors');
+    }
+    public function actionPosts()
+    {
+        return $this->render('posts');
+    }
 }
