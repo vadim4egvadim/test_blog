@@ -12,31 +12,24 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="post-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1><?= Html::encode($this->title) ?> (<?=date('d.m.Y H:i:s',$model->updated_at)?>)</h1>
 
     <p>
-        <?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Delete', ['delete', 'id' => $model->id], [
+        <?= Html::a('Редактировать', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
+        <?= Html::a('Удалить', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
             'data' => [
-                'confirm' => 'Are you sure you want to delete this item?',
+                'confirm' => 'Уверены, что хотите удалить эту запись?',
                 'method' => 'post',
             ],
         ]) ?>
     </p>
 
-    <?= DetailView::widget([
-        'model' => $model,
-        'attributes' => [
-            'id',
-            'title',
-            'content:ntext',
-            'category_id',
-            'status',
-            'created_at',
-            'updated_at',
-            'author',
-        ],
-    ]) ?>
-
+    <p>
+        <img src='<?=$model->file?>' alt='<?=$model->title?>' width='150' class='col-md-3'>
+        <?=$model->content;?>
+    </p>
+    <div class="photos">
+        <?=  $model->displayPhotos();?>
+    </div>
 </div>

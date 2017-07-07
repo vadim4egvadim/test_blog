@@ -18,16 +18,14 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'category_id')->textInput() ?>
 
-    <?= $form->field($model, 'status')->textInput() ?>
+    <?= $form->field($model, 'status')->dropDownList($model->getStatus(),['options' =>[ $model->status_id => ['Selected' => true]]])->label('Выберите статус'); ?>
 
-    <?= $form->field($model, 'created_at')->textInput() ?>
 
-    <?= $form->field($model, 'updated_at')->textInput() ?>
-
-    <?= $form->field($model, 'author')->textInput() ?>
-
+    <?= $form->field($model, 'author')->dropDownList($model->getAuthors(),['options' =>[ $model->author => ['Selected' => true]]])->label('Выберите автора'); ?>
+    
+    <?= $form->field($model, 'file[]')->fileInput(['multiple' => true]) ?>
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Create' : 'Update', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton($model->isNewRecord ? 'Создать' : 'Сохранить', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

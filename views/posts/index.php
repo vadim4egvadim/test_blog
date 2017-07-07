@@ -20,15 +20,34 @@ $this->params['breadcrumbs'][] = $this->title;
         'dataProvider' => $dataProvider,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-
-            'id',
-            'title',
-            'content:ntext',
-            'category_id',
-            'status',
-            'created_at',
-            'updated_at',
-            'author',
+            [   
+                'label' => 'Картинка',
+                'format' => 'raw',
+                'value' => function($data){
+                return Html::img($data->file, ['alt' => $data->title, 'width' => '50px']);
+            }
+            ],
+            [   
+                'label' => 'Заголовок',
+                'format' => 'raw',
+                'value' => function($data){
+                    return $data->title;
+                }
+            ],
+            [   
+                'label' => 'Дата',
+                'format' => 'raw',
+                'value' => function($data){
+                    return date('d.m.Y H:i:s',$data->updated_at);
+                }
+            ],
+            [   
+                'label' => 'Автор',
+                'format' => 'raw',
+                'value' => function($data){
+                    return $data->author_name;
+                }
+            ],
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

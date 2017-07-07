@@ -8,6 +8,8 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
+
 
 /**
  * PostsController implements the CRUD actions for Post model.
@@ -34,10 +36,17 @@ class PostsController extends Controller
      * @return mixed
      */
     public function actionIndex()
-    {
-        $dataProvider = new ActiveDataProvider([
+    {   
+        if(Yii::$app->user->isGuest){
+             $dataProvider = new ActiveDataProvider([
+            'query' => Post::find()->where(['status' => 1]),
+            ]);
+        } else {
+            $dataProvider = new ActiveDataProvider([
             'query' => Post::find(),
-        ]);
+            ]);
+        }
+       
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
@@ -55,7 +64,18 @@ class PostsController extends Controller
             'model' => $this->findModel($id),
         ]);
     }
-
+    public function uploadFiles($model){
+        $path = 'images/posts/'.$model->id.'/';
+        $model->createDirectory($path);
+        $model->file=UploadedFile::getInstances($model,'file');
+        if(is_null($model->file)) return false;
+        //echo var_dump($model->file);
+        foreach ($model->file as $file) {
+            $file->saveAs($path.$file->baseName . '.' . $file->extension);
+        }
+       
+        
+    }
     /**
      * Creates a new Post model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -64,8 +84,10 @@ class PostsController extends Controller
     public function actionCreate()
     {
         $model = new Post();
-
+        $model->created_at = time();;
+        $model->updated_at = time();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $this->uploadFiles($model);
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('create', [
@@ -83,8 +105,9 @@ class PostsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
+        $model->updated_at = time();
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
+            $this->uploadFiles($model);
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             return $this->render('update', [
@@ -105,7 +128,21 @@ class PostsController extends Controller
 
         return $this->redirect(['index']);
     }
-
+    public function actionDelimage($id,$name)
+    {
+        $path = 'images/posts/'.$id.'/'.$name;
+        unlink($path);
+        return $this->redirect(['view', 'id' => $id]);
+    } 
+    
+    public function actionSetava($id,$name)
+    {
+        $path = '/images/posts/'.$id.'/'.$name;
+        $model = $this->findModel($id);
+        $model->file = $path;
+        $model->update();
+        return $this->redirect(['view', 'id' => $id]);
+    } 
     /**
      * Finds the Post model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
