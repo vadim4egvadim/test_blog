@@ -33,17 +33,18 @@ class Post extends \yii\db\ActiveRecord
         $this->status_id = $this->status;
         switch($this->status){
             case "0":
-                $this->status_name = "Неопубликовано";
+                $this->status_name = "Черновик";
                 
                 break;
             case "1":
                 $this->status_name = "Опубликовано";
                 break;  
             default:
-                $this->status_name = "Статус не определён";
+                $this->status_name = "Удалён";
                 break;
         }
     }
+    
     /**
      * @inheritdoc
      */
@@ -59,7 +60,7 @@ class Post extends \yii\db\ActiveRecord
     {
         return [
             [['title', 'content', 'category_id', 'status', 'created_at', 'updated_at', 'author'], 'required'],
-            [['content'], 'string'],
+            [['content','publishedon'], 'string'],
             [['category_id', 'status', 'created_at', 'updated_at', 'author'], 'integer'],
             [['title'], 'string', 'max' => 255],
             [['file'],  'file', 'extensions' => 'png, jpg', 'maxFiles'=> 10],
@@ -83,7 +84,7 @@ class Post extends \yii\db\ActiveRecord
         ];
     }
     public function getAuthors() {
-        $authors = Authors::find()->all();
+        $authors = Authors::find()->where(['status'=>1])->all();
         $authors= ArrayHelper::map($authors,'id','name');
         return $authors;
     }
@@ -125,6 +126,6 @@ class Post extends \yii\db\ActiveRecord
         }
     }
     public function getStatus() {
-      return [1=>'Опубликовано',0=>'Неопубликовано'];
+      return [1=>'Опубликовано',0=>'Черновик', 'Удалено '];
     }
 }

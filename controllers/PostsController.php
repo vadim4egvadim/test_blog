@@ -39,7 +39,7 @@ class PostsController extends Controller
     {   
         if(Yii::$app->user->isGuest){
              $dataProvider = new ActiveDataProvider([
-            'query' => Post::find()->where(['status' => 1]),
+            'query' => Post::find()->where(['status' => 1])->andWhere("`publishedon`<='".date('Y-m-d')."'"),
             ]);
         } else {
             $dataProvider = new ActiveDataProvider([
@@ -84,12 +84,16 @@ class PostsController extends Controller
     public function actionCreate()
     {
         $model = new Post();
-        $model->created_at = time();;
+        $model->created_at = time();
         $model->updated_at = time();
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        
+        if ($model->load(Yii::$app->request->post())) {
+            
+            $model->save();
             $this->uploadFiles($model);
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
+            $model->publishedon = time();
             return $this->render('create', [
                 'model' => $model,
             ]);
@@ -105,8 +109,9 @@ class PostsController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-        $model->updated_at = time();
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        $model->updated_at = time();        
+        if ($model->load(Yii::$app->request->post())) {
+            $model->save();
             $this->uploadFiles($model);
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
